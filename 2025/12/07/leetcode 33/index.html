@@ -19,21 +19,23 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Course PlanCS425&#x2F;ECE428 Distributed System Prequesites: Operating System And Computer networks I’ll prepare by takingMIT Computer Systems Engineering, Which hopefully covers the relevant prerequs">
+    <meta name="description" content="leetcode  This is quite an interesting question, as it doesn’t follow the standard divide and conquer structure.  First realise that each time we cut in half, there would be one side that’s sorted.  B">
 <meta property="og:type" content="article">
-<meta property="og:title" content="My plan before exchange to UIUC">
-<meta property="og:url" content="http://example.com/2025/11/19/hello-world/index.html">
+<meta property="og:title" content="leetcode 33">
+<meta property="og:url" content="http://example.com/2025/12/07/leetcode%2033/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Course PlanCS425&#x2F;ECE428 Distributed System Prequesites: Operating System And Computer networks I’ll prepare by takingMIT Computer Systems Engineering, Which hopefully covers the relevant prerequs">
+<meta property="og:description" content="leetcode  This is quite an interesting question, as it doesn’t follow the standard divide and conquer structure.  First realise that each time we cut in half, there would be one side that’s sorted.  B">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-11-18T13:17:02.804Z">
-<meta property="article:modified_time" content="2025-11-19T03:07:53.481Z">
+<meta property="og:image" content="http://example.com/image.png">
+<meta property="article:published_time" content="2025-12-07T12:44:27.000Z">
+<meta property="article:modified_time" content="2025-12-07T23:54:58.066Z">
 <meta property="article:author" content="Henry Mo">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/image.png">
   
   
   
-  <title>My plan before exchange to UIUC - Hexo</title>
+  <title>leetcode 33 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="My plan before exchange to UIUC"></span>
+            <span id="subtitle" data-typed-text="leetcode 33"></span>
           
         </div>
 
@@ -210,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-19 00:17" pubdate>
-          November 19, 2025 am
+        <time datetime="2025-12-07 23:44" pubdate>
+          December 7, 2025 pm
         </time>
       </span>
     
@@ -222,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6 words
+          83 words
         
       </span>
     
@@ -270,14 +272,19 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">My plan before exchange to UIUC</h1>
+            <h1 id="seo-header">leetcode 33</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Course-Plan"><a href="#Course-Plan" class="headerlink" title="Course Plan"></a>Course Plan</h2><p>CS425&#x2F;ECE428 Distributed System</p>
-<p>Prequesites: <code>Operating System</code> And <code>Computer networks</code></p>
-<p>I’ll prepare by taking<br><a target="_blank" rel="noopener" href="https://web.mit.edu/6.1800/www/">MIT Computer Systems Engineering</a>, Which hopefully covers the relevant prerequsites.</p>
+                <p><a target="_blank" rel="noopener" href="https://leetcode.com/problems/search-in-rotated-sorted-array/description/">leetcode</a></p>
+<p><img src="/image.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>This is quite an interesting question, as it doesn’t follow the standard divide and conquer structure. </p>
+<p>First realise that each time we cut in half, there would be one side that’s sorted.  Because only the segment that’s across the cut would be unsorted, but it’s impossible for both sides of median to be across the cuts.</p>
+<p>Secondly after we know that one side is sorted, we can directly check if target is inside the range and discard one half.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">search</span>(<span class="hljs-params">self, nums: <span class="hljs-type">List</span>[<span class="hljs-built_in">int</span>], target: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">int</span>:<br>        n = <span class="hljs-built_in">len</span>(nums)<br><br>        <span class="hljs-comment"># divide Step</span><br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">divide</span>(<span class="hljs-params">i, j</span>):<br>            <span class="hljs-keyword">if</span> i &gt; j:<br>                <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span><br><br>            mid = i + (j - i) // <span class="hljs-number">2</span><br><br>            <span class="hljs-keyword">if</span> nums[mid] == target:<br>                <span class="hljs-keyword">return</span> mid<br><br>            <span class="hljs-comment"># Left half is sorted</span><br>            <span class="hljs-keyword">if</span> nums[i] &lt;= nums[mid]:<br>                <span class="hljs-comment"># if inside the sorted left half,</span><br>                <span class="hljs-keyword">if</span> nums[i] &lt;= target &lt; nums[mid]:<br>                    <span class="hljs-keyword">return</span> divide(i, mid - <span class="hljs-number">1</span>)<br>                <span class="hljs-keyword">else</span>:<br>                    <span class="hljs-keyword">return</span> divide(mid + <span class="hljs-number">1</span>, j)<br>            <span class="hljs-keyword">else</span>:<br>                <span class="hljs-keyword">if</span> nums[mid] &lt; target &lt;= nums[j]:<br>                    <span class="hljs-keyword">return</span> divide(mid + <span class="hljs-number">1</span>, j)<br>                <span class="hljs-keyword">else</span>:<br>                    <span class="hljs-keyword">return</span> divide(i, mid - <span class="hljs-number">1</span>)<br><br>        <span class="hljs-keyword">return</span> divide(<span class="hljs-number">0</span>, n - <span class="hljs-number">1</span>)<br><br></code></pre></td></tr></table></figure>
+
+
 
                 
               </div>
@@ -295,8 +302,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>My plan before exchange to UIUC</div>
-      <div>http://example.com/2025/11/19/hello-world/</div>
+      <div>leetcode 33</div>
+      <div>http://example.com/2025/12/07/leetcode 33/</div>
     </div>
     <div class="license-meta">
       
@@ -308,7 +315,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>November 19, 2025</div>
+          <div>December 7, 2025</div>
         </div>
       
       
@@ -340,15 +347,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/12/07/leetcode%2033/" title="leetcode 33">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">leetcode 33</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2025/11/19/hello-world/" title="My plan before exchange to UIUC">
+                        <span class="hidden-mobile">My plan before exchange to UIUC</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
@@ -368,7 +375,7 @@
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '44fa40d883973bfe58ad828d31192946'
+            id: 'b6af0c893d722a06f311880bd49b1db8'
           }
         )
         var gitalk = new Gitalk(options);
