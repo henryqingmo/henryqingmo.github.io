@@ -4,9 +4,32 @@
   
   
   <entry>
+    <title>Switching to Claude for Blogging</title>
+    <link href="/2026/02/12/switching-to-claude-for-blogging/"/>
+    <url>/2026/02/12/switching-to-claude-for-blogging/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Why-I’m-Making-the-Switch"><a href="#Why-I’m-Making-the-Switch" class="headerlink" title="Why I’m Making the Switch"></a>Why I’m Making the Switch</h2><p>I’ve decided to start using Claude to help me write and manage my blog posts, and I wanted to share why this feels like a natural evolution in my blogging workflow.</p><h2 id="The-Traditional-Blogging-Challenge"><a href="#The-Traditional-Blogging-Challenge" class="headerlink" title="The Traditional Blogging Challenge"></a>The Traditional Blogging Challenge</h2><p>Writing blog posts has always been a balance between:</p><ul><li>Having ideas I want to share</li><li>Finding the time to write them out properly</li><li>Maintaining consistency in publishing</li><li>Ensuring technical accuracy</li></ul><p>While I love writing, the friction between having a thought and getting it published often meant ideas stayed stuck in my head.</p><h2 id="Enter-Claude"><a href="#Enter-Claude" class="headerlink" title="Enter Claude"></a>Enter Claude</h2><p>Claude Code has changed my blogging workflow in several ways:</p><h3 id="1-Faster-Drafting"><a href="#1-Faster-Drafting" class="headerlink" title="1. Faster Drafting"></a>1. <strong>Faster Drafting</strong></h3><p>Instead of staring at a blank page, I can discuss my ideas conversationally with Claude. It helps me structure my thoughts and creates a solid first draft that I can then refine.</p><h3 id="2-Technical-Assistance"><a href="#2-Technical-Assistance" class="headerlink" title="2. Technical Assistance"></a>2. <strong>Technical Assistance</strong></h3><p>For technical blog posts (like my LeetCode solutions), Claude can help explain algorithms, format code blocks properly, and ensure the technical content is accurate and well-explained.</p><h3 id="3-Workflow-Automation"><a href="#3-Workflow-Automation" class="headerlink" title="3. Workflow Automation"></a>3. <strong>Workflow Automation</strong></h3><p>Claude can handle the entire publishing pipeline - from creating the markdown file with proper front matter to generating the static site and deploying it. This removes all the mechanical friction from blogging.</p><h3 id="4-Maintaining-Voice"><a href="#4-Maintaining-Voice" class="headerlink" title="4. Maintaining Voice"></a>4. <strong>Maintaining Voice</strong></h3><p>The key benefit is that Claude adapts to my writing style and helps me express my ideas more clearly, rather than replacing my voice. I’m still the author; Claude is just a really good writing assistant.</p><h2 id="What-This-Means-for-This-Blog"><a href="#What-This-Means-for-This-Blog" class="headerlink" title="What This Means for This Blog"></a>What This Means for This Blog</h2><p>Going forward, you can expect:</p><ul><li>More frequent posts (less friction means more publishing)</li><li>Better-structured content (two heads are better than one)</li><li>More diverse topics (with help on research and drafting, I can cover more ground)</li><li>The same authentic voice (I’m still writing about my experiences and thoughts)</li></ul><h2 id="The-Future-of-Writing"><a href="#The-Future-of-Writing" class="headerlink" title="The Future of Writing"></a>The Future of Writing</h2><p>I think we’re entering an era where the distinction between “AI-written” and “human-written” content becomes less meaningful. What matters is whether the content is valuable, authentic, and reflects the author’s genuine insights.</p><p>Using AI for writing isn’t about replacing human creativity - it’s about augmenting it. It’s about removing the friction between having an idea and sharing it with the world.</p><p>So here’s to a new chapter in my blogging journey. Let’s see where this takes us!</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>blogging</tag>
+      
+      <tag>AI</tag>
+      
+      <tag>productivity</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>My plan before exchange to UIUC</title>
-    <link href="/2025/12/08/hello-world/"/>
-    <url>/2025/12/08/hello-world/</url>
+    <link href="/2025/12/07/hello-world/"/>
+    <url>/2025/12/07/hello-world/</url>
     
     <content type="html"><![CDATA[<h2 id="Course-Plan"><a href="#Course-Plan" class="headerlink" title="Course Plan"></a>Course Plan</h2><p>CS425&#x2F;ECE428 Distributed System</p><p>Prequesites: <code>Operating System</code> And <code>Computer networks</code></p><p>I’ll prepare by taking<br><a href="https://web.mit.edu/6.1800/www/">MIT Computer Systems Engineering</a>, Which hopefully covers the relevant prerequsites.</p>]]></content>
     
