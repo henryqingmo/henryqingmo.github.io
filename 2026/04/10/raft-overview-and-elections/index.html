@@ -19,22 +19,24 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Goal: Replicated Log → Replicated State Machine 123456789Clients  │  ▼┌─────────────────────────────────────────────────┐│  Server 1: [Consensus Module] → [State Machine] ││  Server 2: [Consensus Modu">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Raft Overview and Leader Elections">
+<meta property="og:url" content="http://example.com/2026/04/10/raft-overview-and-elections/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Goal: Replicated Log → Replicated State Machine 123456789Clients  │  ▼┌─────────────────────────────────────────────────┐│  Server 1: [Consensus Module] → [State Machine] ││  Server 2: [Consensus Modu">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="article:published_time" content="2026-04-10T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T03:27:30.034Z">
 <meta property="article:author" content="Henry Mo">
+<meta property="article:tag" content="consensus">
 <meta property="article:tag" content="distributed-systems">
+<meta property="article:tag" content="raft">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Raft Overview and Leader Elections - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Raft Overview and Leader Elections"></span>
           
         </div>
 
@@ -211,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-04-10 13:00" pubdate>
+          April 10, 2026 pm
         </time>
       </span>
     
@@ -223,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          148 words
         
       </span>
     
@@ -271,49 +273,139 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Raft Overview and Leader Elections</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
-<hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
+                <h1>Goal: Replicated Log → Replicated State Machine</h1>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">Clients<br>  │<br>  ▼<br>┌─────────────────────────────────────────────────┐<br>│  <span class="hljs-keyword">Server</span> <span class="hljs-number">1</span>: [Consensus Module] → [State Machine] │<br>│  <span class="hljs-keyword">Server</span> <span class="hljs-number">2</span>: [Consensus Module] → [State Machine] │<br>│  <span class="hljs-keyword">Server</span> <span class="hljs-number">3</span>: [Consensus Module] → [State Machine] │<br>│  <span class="hljs-keyword">Log</span>: <span class="hljs-keyword">add</span> | jmp | mov | shl   (same <span class="hljs-keyword">on</span> <span class="hljs-keyword">all</span>)     │<br>└─────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
 <ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
+<li><strong>Replicated log</strong> ensures all servers execute <strong>same commands in same order</strong></li>
+<li>System makes progress as long as <strong>any majority</strong> of servers are up</li>
+<li>Failure model: <strong>fail-stop</strong> (not Byzantine), delayed/lost messages OK</li>
 </ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
 <hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+<h1>Raft Overview — 4 Components</h1>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Leader Election</strong></td>
+<td>Select one server as leader; detect crashes, choose new leader</td>
+</tr>
+<tr>
+<td><strong>Neutralizing Old Leaders</strong></td>
+<td>Prevent deposed leaders from corrupting the log</td>
+</tr>
+<tr>
+<td><strong>Normal Operation</strong></td>
+<td>Log replication under a single leader</td>
+</tr>
+<tr>
+<td><strong>Safety</strong></td>
+<td>Consistency after leader changes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1>Terms</h1>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs coq"><span class="hljs-keyword">Term</span> <span class="hljs-number">1</span>    │  <span class="hljs-keyword">Term</span> <span class="hljs-number">2</span>  │  <span class="hljs-keyword">Term</span> <span class="hljs-number">3</span>  │  <span class="hljs-keyword">Term</span> <span class="hljs-number">4</span>  │ <span class="hljs-keyword">Term</span> <span class="hljs-number">5</span><br>──────────┼──────────┼──────────┼──────────┼────────<br>Election  │  Normal  │ Election │ SplitVote│  Normal<br>          │ (leader) │          │(no leader)│<br></code></pre></td></tr></table></figure>
+<ul>
+<li>Time divided into <strong>terms</strong> (logical clock)</li>
+<li>Each term: starts with election, then (if successful) normal operation</li>
+<li><strong>At most 1 leader per term</strong></li>
+<li>Some terms have <strong>no leader</strong> (failed/split election)</li>
+<li><strong>Key role of terms</strong>: identify obsolete/stale information</li>
+</ul>
+<blockquote>
+<p><strong>Important — Terms as a Logical Clock:</strong>
+Terms are monotonically increasing. Every RPC contains the sender's term. If receiver sees a higher term, it updates and steps down. If sender has lower term, RPC is rejected.</p>
+</blockquote>
+<hr>
+<h1>Election Basics</h1>
+<h2 id="Roles">Roles</h2>
+<ul>
+<li><strong>Follower</strong>: passive, responds to RPCs</li>
+<li><strong>Candidate</strong>: running for leader</li>
+<li><strong>Leader</strong>: handles client requests, sends heartbeats</li>
+</ul>
+<h2 id="Election-Trigger">Election Trigger</h2>
+<p>Follower converts to candidate if <strong>election timeout</strong> elapses without:</p>
+<ul>
+<li>Receiving valid AppendEntries RPC (heartbeat), OR</li>
+<li>Granting vote to candidate</li>
+</ul>
+<h2 id="Candidate-Actions">Candidate Actions</h2>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs oxygene">Increment currentTerm<br>Vote <span class="hljs-keyword">for</span> <span class="hljs-keyword">self</span><br>Reset election timeout<br>Send RequestVote RPCs <span class="hljs-keyword">to</span> ALL other servers<br>Wait <span class="hljs-keyword">for</span>:<br>  - Majority votes → become leader<br>  - AppendEntries <span class="hljs-keyword">from</span> <span class="hljs-keyword">new</span> leader → <span class="hljs-keyword">step</span> down<br>  - Timeout without resolution → increment term, retry<br>  - Higher term discovered → <span class="hljs-keyword">step</span> down<br></code></pre></td></tr></table></figure>
+<hr>
+<h1>RequestVote RPC</h1>
+<h2 id="Arguments">Arguments</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>candidateId</code></td>
+<td>Who is requesting</td>
+</tr>
+<tr>
+<td><code>term</code></td>
+<td>Candidate's term</td>
+</tr>
+<tr>
+<td><code>lastLogIndex</code></td>
+<td>Index of candidate's last log entry</td>
+</tr>
+<tr>
+<td><code>lastLogTerm</code></td>
+<td>Term of candidate's last log entry</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Results">Results</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>term</code></td>
+<td>Receiver's current term (for candidate to update itself)</td>
+</tr>
+<tr>
+<td><code>voteGranted</code></td>
+<td>true if vote given</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Implementation">Implementation</h2>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-number">1.</span> If term &gt; currentTerm:<br>     currentTerm ← term (step down <span class="hljs-keyword">if</span> leader <span class="hljs-keyword">or</span> candidate)<br><br><span class="hljs-number">2.</span> If term == currentTerm<br>     AND (votedFor <span class="hljs-keyword">is</span> null OR votedFor == candidateId)<br>     AND candidate&#x27;s <span class="hljs-built_in">log</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">at</span> least <span class="hljs-keyword">as</span> up-<span class="hljs-keyword">to</span>-<span class="hljs-built_in">date</span> <span class="hljs-keyword">as</span> <span class="hljs-keyword">local</span> <span class="hljs-built_in">log</span>:<br>       Grant vote, reset election <span class="hljs-keyword">timeout</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Important — &quot;At Least As Up-To-Date&quot; Rule:</strong>
+Server V denies vote to candidate C if V's log is more up-to-date:</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-punctuation">(</span>lastTermV &gt; lastTermC<span class="hljs-punctuation">)</span> <span class="hljs-string">||</span><br><span class="hljs-punctuation">(</span>lastTermV <span class="hljs-punctuation">=</span><span class="hljs-punctuation">=</span> lastTermC <span class="hljs-meta">&amp;&amp; lastIndexV &gt; lastIndexC)</span><br></code></pre></td></tr></table></figure>
+<p>This ensures the elected leader has all committed entries.</p>
+</blockquote>
+<hr>
+<h1>Safety and Liveness of Elections</h1>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs stata">┌──────────────────────────────────────────────────────┐<br>│ SAFETY: At most <span class="hljs-keyword">one</span> winner per term                  │<br>│   Each server votes <span class="hljs-keyword">for</span> at most <span class="hljs-keyword">one</span> candidate/term   │<br>│   <span class="hljs-keyword">Two</span> candidates can&#x27;t both get majority → safe      │<br>│                                                      │<br>│ LIVENESS: Some candidate must eventually <span class="hljs-keyword">win</span>         │<br>│   Choose election timeouts randomly <span class="hljs-keyword">in</span> [T, kT]       │<br>│   <span class="hljs-keyword">One</span> server usually times <span class="hljs-keyword">out</span> first → wins          │<br>│   Works well <span class="hljs-keyword">if</span> T &gt;&gt; broadcast time                  │<br>└──────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Warning — Liveness Not Guaranteed:</strong>
+Safety IS guaranteed. Liveness is NOT guaranteed in theory (split votes can repeat), but randomized timeouts make it work in practice.</p>
+</blockquote>
 
                 
               </div>
@@ -328,6 +420,10 @@ $$</p>
       
         <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
       
+        <a href="/tags/consensus/" class="print-no-link">#consensus</a>
+      
+        <a href="/tags/raft/" class="print-no-link">#raft</a>
+      
     </div>
   
 </div>
@@ -338,8 +434,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Raft Overview and Leader Elections</div>
+      <div>http://example.com/2026/04/10/raft-overview-and-elections/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +447,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>April 10, 2026</div>
         </div>
       
       
@@ -383,9 +479,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/synchronous-consensus/" title="Synchronous Consensus">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Synchronous Consensus</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +489,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/04/10/paxos-algorithm/" title="Paxos Algorithm">
+                        <span class="hidden-mobile">Paxos Algorithm</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +513,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: 'c66a0686ac4e20fad4ab0830f7d9c5f4'
           }
         )
         var gitalk = new Gitalk(options);

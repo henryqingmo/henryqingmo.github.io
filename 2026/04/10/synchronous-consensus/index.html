@@ -19,22 +19,23 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Consensus Problem Setup  System of N processes: P1, P2, ..., Pn Each process Pi:  Begins in undecided state Proposes value vi Eventually sets decision variable di → enters decided state     Required P">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Synchronous Consensus">
+<meta property="og:url" content="http://example.com/2026/04/10/synchronous-consensus/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Consensus Problem Setup  System of N processes: P1, P2, ..., Pn Each process Pi:  Begins in undecided state Proposes value vi Eventually sets decision variable di → enters decided state     Required P">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="article:published_time" content="2026-04-10T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T03:26:31.441Z">
 <meta property="article:author" content="Henry Mo">
+<meta property="article:tag" content="consensus">
 <meta property="article:tag" content="distributed-systems">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Synchronous Consensus - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Synchronous Consensus"></span>
           
         </div>
 
@@ -211,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-04-10 13:00" pubdate>
+          April 10, 2026 pm
         </time>
       </span>
     
@@ -223,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          103 words
         
       </span>
     
@@ -234,7 +235,7 @@
         
         
         
-          2 mins
+          1 mins
         
       </span>
     
@@ -271,49 +272,90 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Synchronous Consensus</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
-<hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
+                <h1>Consensus Problem</h1>
+<h2 id="Setup">Setup</h2>
 <ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
+<li>System of N processes: P1, P2, ..., Pn</li>
+<li>Each process Pi:
+<ul>
+<li>Begins in <strong>undecided</strong> state</li>
+<li>Proposes value <code>vi</code></li>
+<li>Eventually sets decision variable <code>di</code> → enters <strong>decided</strong> state</li>
 </ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
+</li>
+</ul>
 <hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+<h1>Required Properties</h1>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Termination</strong></td>
+<td>Eventually, every process sets its decision variable</td>
+</tr>
+<tr>
+<td><strong>Agreement</strong></td>
+<td>All correct processes decide the same value: if Pi and Pj correct → di = dj</td>
+</tr>
+<tr>
+<td><strong>Integrity</strong></td>
+<td>If ALL correct processes proposed the same value, any correct decided process chose that value</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Important — Why Integrity?</strong>
+Without integrity, a trivial algorithm could always decide a fixed constant (e.g., 0) and satisfy termination + agreement — but be useless. Integrity prevents this by linking the decision to the proposals.</p>
+</blockquote>
+<blockquote>
+<p><strong>Warning — Integrity Definition Varies:</strong>
+&quot;The specific definition of integrity may vary across sources and systems.&quot; Know the version used in your course.</p>
+</blockquote>
+<hr>
+<h1>Round-Based Synchronous Consensus</h1>
+<h2 id="Assumption">Assumption</h2>
+<ul>
+<li>At most <strong>f</strong> processes can crash</li>
+<li>All processes are <strong>synchronized</strong> — operate in rounds</li>
+<li>One round = ε + T time units
+<ul>
+<li>T = max message transmission time</li>
+<li>ε = max clock drift between processes</li>
+</ul>
+</li>
+<li>Algorithm runs <strong>f + 1 rounds</strong></li>
+<li>Channels are reliable</li>
+</ul>
+<h2 id="Why-f-1-rounds">Why f + 1 rounds?</h2>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">┌─────────────────────────────────────────────────────┐<br>│ <span class="hljs-keyword">Each</span> round can &quot;mask&quot; one crash.                    │<br>│ <span class="hljs-keyword">With</span> f crashes possible, we need f+<span class="hljs-number">1</span> rounds         │<br>│ <span class="hljs-keyword">to</span> guarantee <span class="hljs-keyword">all</span> processes <span class="hljs-keyword">share</span> the same <span class="hljs-keyword">value</span> <span class="hljs-keyword">set</span>.│<br>└─────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<h2 id="Algorithm">Algorithm</h2>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs sqf"><span class="hljs-built_in">Values</span>ᵣᵢ = <span class="hljs-built_in">set</span> of proposed <span class="hljs-built_in">values</span> known <span class="hljs-keyword">to</span> <span class="hljs-literal">Pi</span> at start of <span class="hljs-built_in">round</span> r<br><br>Initially: <span class="hljs-built_in">Values</span>¹ᵢ = &#123;vᵢ&#125;<br><br><span class="hljs-keyword">for</span> r = <span class="hljs-number">1</span> <span class="hljs-keyword">to</span> f+<span class="hljs-number">1</span>:<br>  B-multicast(<span class="hljs-built_in">Values</span>ᵣᵢ - <span class="hljs-built_in">Values</span>ʳ⁻¹ᵢ)   <span class="hljs-comment">// send only NEW values this round</span><br>  <span class="hljs-built_in">Values</span>ʳ⁺¹ᵢ = <span class="hljs-built_in">Values</span>ᵣᵢ<br>  wait until <span class="hljs-built_in">round</span> ends<br>  <span class="hljs-keyword">for</span> each vj received <span class="hljs-built_in">in</span> this <span class="hljs-built_in">round</span>:<br>    <span class="hljs-built_in">Values</span>ʳ⁺¹ᵢ = <span class="hljs-built_in">Values</span>ʳ⁺¹ᵢ ∪ &#123;vj&#125;<br><br>dᵢ = minimum(<span class="hljs-built_in">Values</span>ᶠ⁺²ᵢ)<br></code></pre></td></tr></table></figure>
+<h2 id="Execution-Trace">Execution Trace</h2>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sqf"><span class="hljs-built_in">Round</span> <span class="hljs-number">1</span>:  Each <span class="hljs-literal">Pi</span> broadcasts its own value<br><span class="hljs-built_in">Round</span> <span class="hljs-number">2</span>:  Each <span class="hljs-literal">Pi</span> broadcasts <span class="hljs-built_in">values</span> learned <span class="hljs-built_in">in</span> <span class="hljs-built_in">round</span> <span class="hljs-number">1</span><br>...<br><span class="hljs-built_in">Round</span> f+<span class="hljs-number">1</span>: Final broadcast<br><br>Decide: minimum of all known <span class="hljs-built_in">values</span> after f+<span class="hljs-number">1</span> rounds<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Tip — Only Broadcast New Values:</strong>
+Each round, Pi only sends values it <strong>newly learned</strong> (not previously sent). This limits message size growth.</p>
+</blockquote>
+<blockquote>
+<p><strong>Tip — Minimum as Decision:</strong>
+Using <code>minimum()</code> ensures all correct processes who survive all rounds decide the same value — satisfying agreement and integrity.</p>
+</blockquote>
+<h2 id="Performance">Performance</h2>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mathematica"><span class="hljs-variable">Rounds</span><span class="hljs-operator">:</span> <span class="hljs-variable">f</span> <span class="hljs-operator">+</span> <span class="hljs-number">1</span><br><span class="hljs-built_in">Messages</span> <span class="hljs-variable">per</span> <span class="hljs-variable">round</span><span class="hljs-operator">:</span> <span class="hljs-built_in">O</span><span class="hljs-punctuation">(</span><span class="hljs-built_in">N</span>²<span class="hljs-punctuation">)</span> <span class="hljs-variable">in</span> <span class="hljs-variable">worst</span> <span class="hljs-variable">case</span><br><span class="hljs-built_in">Total</span> <span class="hljs-variable">messages</span><span class="hljs-operator">:</span> <span class="hljs-built_in">O</span><span class="hljs-punctuation">(</span><span class="hljs-built_in">N</span>² <span class="hljs-operator">*</span> <span class="hljs-variable">f</span><span class="hljs-punctuation">)</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Warning — f + 1 Round Lower Bound:</strong>
+It can be proven that f + 1 rounds is the minimum required for synchronous consensus with f possible crashes. This algorithm is optimal.</p>
+</blockquote>
 
                 
               </div>
@@ -328,6 +370,8 @@ $$</p>
       
         <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
       
+        <a href="/tags/consensus/" class="print-no-link">#consensus</a>
+      
     </div>
   
 </div>
@@ -338,8 +382,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Synchronous Consensus</div>
+      <div>http://example.com/2026/04/10/synchronous-consensus/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +395,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>April 10, 2026</div>
         </div>
       
       
@@ -383,9 +427,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/ricart-agrawala-algorithm/" title="Ricart-Agrawala Algorithm">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Ricart-Agrawala Algorithm</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +437,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/04/10/raft-overview-and-elections/" title="Raft Overview and Leader Elections">
+                        <span class="hidden-mobile">Raft Overview and Leader Elections</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +461,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: '3d06c015e2d8ee64cfbc989772e97eaa'
           }
         )
         var gitalk = new Gitalk(options);

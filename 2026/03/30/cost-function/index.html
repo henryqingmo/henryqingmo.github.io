@@ -19,22 +19,33 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Idea   NOTE To minimise the cost functions, it&#39;s exactly the same as minimising the Mean Square Error. We append a $\frac{1}{2}$ in front to cancel out the extra 2 coming from the derivative.   A sing">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Cost Function">
+<meta property="og:url" content="http://example.com/2026/03/30/cost-function/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Idea   NOTE To minimise the cost functions, it&#39;s exactly the same as minimising the Mean Square Error. We append a $\frac{1}{2}$ in front to cancel out the extra 2 coming from the derivative.   A sing">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250916154744.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250930222956.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250916160838.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250916160451.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250930180918.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250916164056.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020251006012524.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250925120213.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250925120800.png">
+<meta property="og:image" content="http://example.com/images/Pasted%20image%2020250930164442.png">
+<meta property="article:published_time" content="2026-03-30T11:13:19.000Z">
+<meta property="article:modified_time" content="2026-03-30T06:14:36.387Z">
 <meta property="article:author" content="Henry Mo">
-<meta property="article:tag" content="distributed-systems">
+<meta property="article:tag" content="machine_learning&#x2F;supervised_learning">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/Pasted%20image%2020250916154744.png">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Cost Function - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +211,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Cost Function"></span>
           
         </div>
 
@@ -211,8 +222,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-03-30 06:13" pubdate>
+          March 30, 2026 am
         </time>
       </span>
     
@@ -223,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          31 words
         
       </span>
     
@@ -234,7 +245,7 @@
         
         
         
-          2 mins
+          1 mins
         
       </span>
     
@@ -271,49 +282,43 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Cost Function</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
-<hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
-<ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
-</ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+                <h3 id="Idea">Idea</h3>
+<p><img src="/images/Pasted%20image%2020250916154744.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250916154744.png"></p>
+<blockquote>
+<p><strong>NOTE</strong>
+To minimise the cost functions, it's exactly the same as minimising the Mean Square Error.
+We append a $\frac{1}{2}$ in front to cancel out the extra 2 coming from the derivative.</p>
+</blockquote>
+<p><img src="/images/Pasted%20image%2020250930222956.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250930222956.png">
+A single training sample is called the loss function.</p>
+<p><img src="/images/Pasted%20image%2020250916160838.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250916160838.png">
+<img src="/images/Pasted%20image%2020250916160451.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250916160451.png"></p>
+<blockquote>
+<p><strong>NOTE</strong>
+A surprising connection, the cost function is also the negative of  Maximum Likelihood Estimator in this case, therefore minimising the cost function is maximising the MLE.
+<img src="/images/Pasted%20image%2020250930180918.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250930180918.png"></p>
+</blockquote>
+<p><img src="/images/Pasted%20image%2020250916164056.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250916164056.png"></p>
+<blockquote>
+<p><strong>NOTE</strong>
+On the left we have 3 different hypothesis, on the bottom we have a graph of the cost function of parameters $w$ and $b$, on the top right is the graph sliced at different levels, the contour doesn't look circular as it's in the space of (w, b) not (x, y).</p>
+</blockquote>
+<p><img src="/images/Pasted%20image%2020251006012524.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20251006012524.png">
+It turns out the least square error is equivalent to assuming that each data point was drawn from a Normal Distribution with the Mean lies on the regression line.</p>
+<h4 id="Test-Loss">Test-Loss</h4>
+<p><img src="/images/Pasted%20image%2020250925120213.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250925120213.png"></p>
+<blockquote>
+<p><strong>NOTE</strong>
+Here we basically go through every sample in the test sample, and sum up the loss squared.</p>
+</blockquote>
+<p><img src="/images/Pasted%20image%2020250925120800.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250925120800.png"></p>
+<h4 id="Why-Least-Square">Why Least Square</h4>
+<p><img src="/images/Pasted%20image%2020250930164442.png" srcset="/img/loading.gif" lazyload alt="Pasted image 20250930164442.png"></p>
 
                 
               </div>
@@ -326,7 +331,7 @@ $$</p>
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
+        <a href="/tags/machine-learning-supervised-learning/" class="print-no-link">#machine_learning/supervised_learning</a>
       
     </div>
   
@@ -338,8 +343,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Cost Function</div>
+      <div>http://example.com/2026/03/30/cost-function/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +356,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>March 30, 2026</div>
         </div>
       
       
@@ -383,9 +388,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/paxos-algorithm/" title="Paxos Algorithm">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Paxos Algorithm</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +398,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/03/02/failure-detector-worst-case-detection-time/" title="Failure Detector Worst-Case Detection Time">
+                        <span class="hidden-mobile">Failure Detector Worst-Case Detection Time</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +422,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: 'f506c2b6fe55bc4f09920b0e36d1bdf4'
           }
         )
         var gitalk = new Gitalk(options);

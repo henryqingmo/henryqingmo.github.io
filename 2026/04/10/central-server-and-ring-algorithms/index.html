@@ -19,22 +19,23 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Central Server Algorithm Concept Elect a central server (leader) that manages a queue of waiting requests and a token. 12345┌──────────────────────────────────────────────────────┐│               Cent">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Central Server and Ring-Based Mutual Exclusion">
+<meta property="og:url" content="http://example.com/2026/04/10/central-server-and-ring-algorithms/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Central Server Algorithm Concept Elect a central server (leader) that manages a queue of waiting requests and a token. 12345┌──────────────────────────────────────────────────────┐│               Cent">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="article:published_time" content="2026-04-10T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T03:25:02.290Z">
 <meta property="article:author" content="Henry Mo">
 <meta property="article:tag" content="distributed-systems">
+<meta property="article:tag" content="mutual-exclusion">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Central Server and Ring-Based Mutual Exclusion - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Central Server and Ring-Based Mutual Exclusion"></span>
           
         </div>
 
@@ -211,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-04-10 13:00" pubdate>
+          April 10, 2026 pm
         </time>
       </span>
     
@@ -223,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          88 words
         
       </span>
     
@@ -234,7 +235,7 @@
         
         
         
-          2 mins
+          1 mins
         
       </span>
     
@@ -271,49 +272,84 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Central Server and Ring-Based Mutual Exclusion</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
+                <h1>Central Server Algorithm</h1>
+<h2 id="Concept">Concept</h2>
+<p>Elect a central server (leader) that manages a <strong>queue</strong> of waiting requests and a <strong>token</strong>.</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">┌──────────────────────────────────────────────────────┐<br>│               Central <span class="hljs-keyword">Server</span> State                   │<br>│   - Queue <span class="hljs-keyword">of</span> waiting processes                       │<br>│   - Token (allows holder <span class="hljs-keyword">to</span> <span class="hljs-keyword">access</span> CS)               │<br>└──────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<h2 id="Any-Process">Any Process</h2>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk">enter():<br>  Send REQUEST to leader<br>  Wait <span class="hljs-keyword">for</span> TOKEN from leader<br><br><span class="hljs-keyword">exit</span>():<br>  Send TOKEN back to leader<br></code></pre></td></tr></table></figure>
+<h2 id="Leader-Actions">Leader Actions</h2>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs oxygene"><span class="hljs-keyword">On</span> receiving REQUEST <span class="hljs-keyword">from</span> Pi:<br>  <span class="hljs-keyword">if</span> (leader <span class="hljs-keyword">has</span> token):<br>    Send token <span class="hljs-keyword">to</span> Pi<br>  <span class="hljs-keyword">else</span>:<br>    <span class="hljs-keyword">Add</span> Pi <span class="hljs-keyword">to</span> queue<br><br><span class="hljs-keyword">On</span> receiving TOKEN <span class="hljs-keyword">from</span> Pi (i.e., Pi <span class="hljs-keyword">has</span> exited CS):<br>  <span class="hljs-keyword">if</span> (queue <span class="hljs-keyword">not</span> <span class="hljs-keyword">empty</span>):<br>    Dequeue head Pj<br>    Send token <span class="hljs-keyword">to</span> Pj<br>  <span class="hljs-keyword">else</span>:<br>    Retain token<br></code></pre></td></tr></table></figure>
+<h2 id="Performance">Performance</h2>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk">enter(): <span class="hljs-number">2</span> messages (request + token)<br><span class="hljs-keyword">exit</span>():  <span class="hljs-number">1</span> message  (return token)<br>Total bandwidth: <span class="hljs-number">3</span> messages<br><br>Client delay:  <span class="hljs-number">2</span> message delays (req → token)<br>Sync delay:    <span class="hljs-number">2</span> message delays (<span class="hljs-keyword">exit</span> token → new token)<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Tip — Central Server Simplicity:</strong>
+Simple to implement and reason about. The leader serializes all requests naturally.</p>
+</blockquote>
+<blockquote>
+<p><strong>Warning — Single Point of Failure:</strong>
+If the leader crashes, the entire system stalls. Need leader election to recover.</p>
+</blockquote>
 <hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
+<h1>Ring-Based Mutual Exclusion</h1>
+<h2 id="Concept-2">Concept</h2>
+<p>N processes arranged in a <strong>virtual ring</strong>. Exactly <strong>1 token</strong> circulates around the ring.</p>
+<figure class="highlight tp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tp"><span class="hljs-keyword">P</span><span class="hljs-number">1</span> → <span class="hljs-keyword">P</span><span class="hljs-number">2</span> → <span class="hljs-keyword">P</span><span class="hljs-number">3</span> → ... → PN → <span class="hljs-keyword">P</span><span class="hljs-number">1</span><br>       (token circulates)<br></code></pre></td></tr></table></figure>
+<h2 id="Actions">Actions</h2>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs awk">enter():<br>  Wait until you receive the token<br><br><span class="hljs-keyword">exit</span>():  <span class="hljs-regexp">//</span> you already hold the token<br>  Pass token to ring successor<br><br>On receiving token (not <span class="hljs-keyword">in</span> enter()):<br>  Pass token to ring successor immediately<br></code></pre></td></tr></table></figure>
+<h2 id="Performance-2">Performance</h2>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs awk">enter():  <span class="hljs-number">0</span> to N-<span class="hljs-number">1</span> message delays (wait <span class="hljs-keyword">for</span> token to arrive)<br><span class="hljs-keyword">exit</span>():   <span class="hljs-number">1</span> message (pass token to successor)<br><br>Bandwidth per <span class="hljs-string">&quot;rotation&quot;</span>: N messages (always circulating)<br>Sync delay: <span class="hljs-number">1</span> to N-<span class="hljs-number">1</span> message delays<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Important — Ring Token Always Circulates:</strong>
+The token passes around the ring even when no process wants CS. This wastes bandwidth but ensures low sync delay once token arrives.</p>
+</blockquote>
+<blockquote>
+<p><strong>Warning — Token Loss:</strong>
+If a process crashes while holding the token, the token is lost. Need a detection and regeneration mechanism.</p>
+</blockquote>
 <hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
-<ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
-</ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+<h2 id="Comparison">Comparison</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Central Server</th>
+<th>Ring-Based</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>enter bandwidth</strong></td>
+<td>2 messages</td>
+<td>0 messages (just wait)</td>
+</tr>
+<tr>
+<td><strong>exit bandwidth</strong></td>
+<td>1 message</td>
+<td>1 message</td>
+</tr>
+<tr>
+<td><strong>Client delay</strong></td>
+<td>2 msg delays</td>
+<td>0 to N-1 msg delays</td>
+</tr>
+<tr>
+<td><strong>Sync delay</strong></td>
+<td>2 msg delays</td>
+<td>1 msg delay</td>
+</tr>
+<tr>
+<td><strong>Failure point</strong></td>
+<td>Leader crash</td>
+<td>Token loss</td>
+</tr>
+</tbody>
+</table>
 
                 
               </div>
@@ -328,6 +364,8 @@ $$</p>
       
         <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
       
+        <a href="/tags/mutual-exclusion/" class="print-no-link">#mutual-exclusion</a>
+      
     </div>
   
 </div>
@@ -338,8 +376,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Central Server and Ring-Based Mutual Exclusion</div>
+      <div>http://example.com/2026/04/10/central-server-and-ring-algorithms/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +389,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>April 10, 2026</div>
         </div>
       
       
@@ -383,9 +421,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/basic-and-reliable-multicast/" title="Basic and Reliable Multicast">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Basic and Reliable Multicast</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +431,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/04/10/leader-election-algorithms/" title="Leader Election Algorithms">
+                        <span class="hidden-mobile">Leader Election Algorithms</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +455,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: '2df2de032112934e04ac342f7d48ee0e'
           }
         )
         var gitalk = new Gitalk(options);

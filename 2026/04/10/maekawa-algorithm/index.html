@@ -19,22 +19,23 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Maekawa&#39;s Voting Sets Key Idea Instead of requesting from ALL processes, each Pi only requests from its voting set Vi. Voting Set Properties 1234┌───────────────────────────────────────────────────┐│">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Maekawa Algorithm">
+<meta property="og:url" content="http://example.com/2026/04/10/maekawa-algorithm/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Maekawa&#39;s Voting Sets Key Idea Instead of requesting from ALL processes, each Pi only requests from its voting set Vi. Voting Set Properties 1234┌───────────────────────────────────────────────────┐│">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="article:published_time" content="2026-04-10T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T03:25:37.467Z">
 <meta property="article:author" content="Henry Mo">
 <meta property="article:tag" content="distributed-systems">
+<meta property="article:tag" content="mutual-exclusion">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Maekawa Algorithm - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Maekawa Algorithm"></span>
           
         </div>
 
@@ -211,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-04-10 13:00" pubdate>
+          April 10, 2026 pm
         </time>
       </span>
     
@@ -223,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          99 words
         
       </span>
     
@@ -234,7 +235,7 @@
         
         
         
-          2 mins
+          1 mins
         
       </span>
     
@@ -271,49 +272,75 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Maekawa Algorithm</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
+                <h1>Maekawa's Voting Sets</h1>
+<h2 id="Key-Idea">Key Idea</h2>
+<p>Instead of requesting from ALL processes, each Pi only requests from its <strong>voting set</strong> Vi.</p>
+<h2 id="Voting-Set-Properties">Voting Set Properties</h2>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">┌───────────────────────────────────────────────────┐<br>│ <span class="hljs-number">1.</span> Each <span class="hljs-built_in">process</span> Pi belongs <span class="hljs-built_in">to</span> its own <span class="hljs-built_in">set</span>: Pi ∈ Vi │<br>│ <span class="hljs-number">2.</span> Any <span class="hljs-literal">two</span> voting sets MUST <span class="hljs-built_in">intersect</span>: Vi ∩ Vj ≠ ∅ │<br>└───────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Important — Why Intersection Matters:</strong>
+If two processes could both get all votes from their disjoint sets, they could both enter CS simultaneously — violating safety. Intersection ensures at least one process must vote for BOTH, preventing this.</p>
+</blockquote>
+<h2 id="Optimal-Voting-Set-Size">Optimal Voting Set Size</h2>
+<p>With N processes, optimal voting sets have size <strong>~√N</strong>, giving bandwidth <strong>~3√N</strong> (much better than 2(N-1) for RA).</p>
 <hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
+<h2 id="Key-Difference-from-Ricart-Agrawala">Key Difference from Ricart-Agrawala</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ricart-Agrawala</th>
+<th>Maekawa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Request sent to</strong></td>
+<td>All N-1 processes</td>
+<td>Only |Vi| processes</td>
+</tr>
+<tr>
+<td><strong>Vote given to</strong></td>
+<td>All (reply always)</td>
+<td>At most <strong>one</strong> at a time</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
+<h2 id="Algorithm">Algorithm</h2>
+<h3 id="State-Variables">State Variables</h3>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">state</span> = Released<br><span class="hljs-attr">voted</span> = <span class="hljs-literal">false</span>    // has this process given its vote?<br></code></pre></td></tr></table></figure>
+<h3 id="enter-at-Pi">enter() at Pi</h3>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs pf"><span class="hljs-keyword">state</span> = Wanted<br>Multicast Request <span class="hljs-keyword">to</span> <span class="hljs-literal">all</span> processes <span class="hljs-keyword">in</span> Vi<br>Wait <span class="hljs-keyword">for</span> Reply (vote) <span class="hljs-keyword">from</span> ALL processes <span class="hljs-keyword">in</span> Vi (including <span class="hljs-literal">self</span>)<br><span class="hljs-keyword">state</span> = Held<br></code></pre></td></tr></table></figure>
+<h3 id="exit-at-Pi">exit() at Pi</h3>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs pf"><span class="hljs-keyword">state</span> = Released<br>Multicast Release <span class="hljs-keyword">to</span> <span class="hljs-literal">all</span> processes <span class="hljs-keyword">in</span> Vi<br></code></pre></td></tr></table></figure>
+<h3 id="On-receiving-Request-from-Pj-at-Pi">On receiving Request from Pj at Pi</h3>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pf">if (<span class="hljs-keyword">state</span> == Held OR voted == true):<br>  Queue the request<br>else:<br>  Send Reply <span class="hljs-keyword">to</span> Pj<br>  voted = true<br></code></pre></td></tr></table></figure>
+<h3 id="On-receiving-Release-from-Pj-at-Pi">On receiving Release from Pj at Pi</h3>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs oxygene"><span class="hljs-keyword">if</span> (queue <span class="hljs-keyword">is</span> <span class="hljs-keyword">empty</span>):<br>  voted = <span class="hljs-keyword">false</span><br><span class="hljs-keyword">else</span>:<br>  Dequeue head Pk<br>  Send Reply <span class="hljs-keyword">to</span> Pk<br>  voted = <span class="hljs-keyword">true</span>     <span class="hljs-comment">// still voting (now for Pk)</span><br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="Execution-Flow">Execution Flow</h2>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs armasm">┌──────────────────────────────────────────────────┐<br>│ <span class="hljs-built_in">P1</span> <span class="hljs-keyword">and</span> <span class="hljs-built_in">P2</span> both want CS simultaneously            │<br>│                                                  │<br>│ <span class="hljs-meta">If</span> <span class="hljs-built_in">V1</span> ∩ <span class="hljs-built_in">V2</span> = &#123;<span class="hljs-built_in">P3</span>&#125;:                              │<br>│   <span class="hljs-built_in">P3</span> can only vote for ONE (voted<span class="hljs-symbol">=true</span>)          │<br>│   → Only <span class="hljs-built_in">P1</span> OR <span class="hljs-built_in">P2</span> gets all votes                 │<br>│   → Safety guaranteed                            │<br>└──────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Warning — Deadlock Possibility:</strong>
+Maekawa can deadlock if processes queue requests in different orders. Requires additional deadlock detection/resolution (not covered in base algorithm).</p>
+</blockquote>
+<hr>
+<h2 id="Performance">Performance</h2>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs excel">Bandwid<span class="hljs-symbol">th:</span> ~<span class="hljs-number">3</span>√<span class="hljs-built_in">N</span> messages per CS entry<br>  - √<span class="hljs-built_in">N</span> Requests + √<span class="hljs-built_in">N</span> Replies + √<span class="hljs-built_in">N</span> Releases<br><br>Client del<span class="hljs-symbol">ay:</span>   ~<span class="hljs-number">2</span>√<span class="hljs-built_in">N</span> message delays<br>Sync del<span class="hljs-symbol">ay:</span>     <span class="hljs-number">2</span> message delays<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Tip — Bandwidth vs RA:</strong>
+Maekawa saves significant bandwidth vs RA for large N:</p>
 <ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
+<li>RA: O(N) messages</li>
+<li>Maekawa: O(√N) messages</li>
 </ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+</blockquote>
 
                 
               </div>
@@ -328,6 +355,8 @@ $$</p>
       
         <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
       
+        <a href="/tags/mutual-exclusion/" class="print-no-link">#mutual-exclusion</a>
+      
     </div>
   
 </div>
@@ -338,8 +367,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Maekawa Algorithm</div>
+      <div>http://example.com/2026/04/10/maekawa-algorithm/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +380,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>April 10, 2026</div>
         </div>
       
       
@@ -383,9 +412,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/leader-election-algorithms/" title="Leader Election Algorithms">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Leader Election Algorithms</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +422,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/04/10/mutual-exclusion-overview/" title="Mutual Exclusion Overview">
+                        <span class="hidden-mobile">Mutual Exclusion Overview</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +446,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: '891dd8d0f5fb009903ebc40a2b9a955a'
           }
         )
         var gitalk = new Gitalk(options);

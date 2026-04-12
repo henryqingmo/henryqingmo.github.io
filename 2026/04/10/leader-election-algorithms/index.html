@@ -19,22 +19,23 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Election Problem Formal Definition A correct election algorithm must guarantee:    Property Requirement     Safety For all non-faulty processes p: p has elected (q: best non-faulty process) OR Null">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Leader Election Algorithms">
+<meta property="og:url" content="http://example.com/2026/04/10/leader-election-algorithms/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Election Problem Formal Definition A correct election algorithm must guarantee:    Property Requirement     Safety For all non-faulty processes p: p has elected (q: best non-faulty process) OR Null">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="article:published_time" content="2026-04-10T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T03:26:09.844Z">
 <meta property="article:author" content="Henry Mo">
 <meta property="article:tag" content="distributed-systems">
+<meta property="article:tag" content="leader-election">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Leader Election Algorithms - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Leader Election Algorithms"></span>
           
         </div>
 
@@ -211,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-04-10 13:00" pubdate>
+          April 10, 2026 pm
         </time>
       </span>
     
@@ -223,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          254 words
         
       </span>
     
@@ -234,7 +235,7 @@
         
         
         
-          2 mins
+          3 mins
         
       </span>
     
@@ -271,49 +272,123 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Leader Election Algorithms</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
-<hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
+                <h1>Election Problem</h1>
+<h2 id="Formal-Definition">Formal Definition</h2>
+<p>A correct election algorithm must guarantee:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Safety</strong></td>
+<td>For all non-faulty processes p: p has elected (q: best non-faulty process) OR Null</td>
+</tr>
+<tr>
+<td><strong>Liveness</strong></td>
+<td>Election run terminates AND all non-faulty processes' elected ≠ Null</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Important — Election Attribute:</strong>
+The process with the <strong>best (highest) election attribute</strong> wins.
+Common attributes: highest ID, highest IP, fastest CPU, most disk space.
+Ties broken by combining attribute with process ID.</p>
+</blockquote>
+<h2 id="Performance-Metrics">Performance Metrics</h2>
 <ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
+<li><strong>Bandwidth</strong>: total number of messages sent</li>
+<li><strong>Turnaround time</strong>: number of serialized message transmissions from initiation to termination</li>
 </ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
 <hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+<h1>Ring Election Algorithm (Chang &amp; Roberts, 1979)</h1>
+<h2 id="Setup">Setup</h2>
+<p>Processes arranged in a <strong>virtual ring</strong>. Messages forwarded to ring successor.</p>
+<h2 id="Protocol">Protocol</h2>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs pf">When Pi starts election:<br>  Send (election, <span class="hljs-variable">&lt;attri, i&gt;</span>) <span class="hljs-keyword">to</span> ring successor<br>  Set <span class="hljs-keyword">state</span> = participating<br><br>When Pj receives (election, <span class="hljs-variable">&lt;attrx, x&gt;</span>) <span class="hljs-keyword">from</span> predecessor:<br>  if (attrx, x) &gt; (attrj, j):<br>    Forward (election, <span class="hljs-variable">&lt;attrx, x&gt;</span>) <span class="hljs-keyword">to</span> successor<br>    <span class="hljs-keyword">state</span> = participating<br><br>  if (attrx, x) <span class="hljs-variable">&lt; (attrj, j):</span><br><span class="hljs-variable">    if (not participating):</span><br><span class="hljs-variable">      Send (election, &lt;attrj, j&gt;</span>) <span class="hljs-keyword">to</span> successor<br>      <span class="hljs-keyword">state</span> = participating<br>    // if already participating, discard (suppress weaker candidates)<br><br>  if (attrx, x) == (attrj, j):<br>    Pj IS the elected leader!  // message came full circle<br>    Send <span class="hljs-string">&quot;elected&quot;</span> message containing Pj&#x27;s id<br>    // <span class="hljs-string">&quot;elected&quot;</span> message forwarded until it reaches leader<br>    Set <span class="hljs-keyword">state</span> = not participating when elected message received<br></code></pre></td></tr></table></figure>
+<h2 id="Key-Insight-—-Why-attrx-x-attrj-j-Means-Elected">Key Insight — Why (attrx, x) == (attrj, j) Means Elected?</h2>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">┌────────────────────────────────────────────────────────┐<br>│ If <span class="hljs-keyword">a</span> message bearing your own ID returns <span class="hljs-built_in">to</span> you,       │<br>│ <span class="hljs-keyword">it</span> means your message traveled <span class="hljs-keyword">the</span> ENTIRE ring         │<br>│ <span class="hljs-keyword">without</span> being suppressed — you have <span class="hljs-keyword">the</span> highest attr!  │<br>└────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<h2 id="Performance">Performance</h2>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mathematica"><span class="hljs-variable">Best</span> <span class="hljs-variable">case</span><span class="hljs-operator">:</span>  <span class="hljs-built_in">O</span><span class="hljs-punctuation">(</span><span class="hljs-built_in">N</span><span class="hljs-punctuation">)</span> <span class="hljs-variable">messages</span> <span class="hljs-punctuation">(</span><span class="hljs-variable">one</span> <span class="hljs-variable">message</span> <span class="hljs-variable">per</span> <span class="hljs-variable">node</span><span class="hljs-punctuation">)</span><br><span class="hljs-variable">Worst</span> <span class="hljs-variable">case</span><span class="hljs-operator">:</span> <span class="hljs-built_in">O</span><span class="hljs-punctuation">(</span><span class="hljs-built_in">N</span>²<span class="hljs-punctuation">)</span> <span class="hljs-variable">messages</span> <span class="hljs-punctuation">(</span><span class="hljs-built_in">N</span> <span class="hljs-variable">candidates</span><span class="hljs-operator">,</span> <span class="hljs-variable">each</span> <span class="hljs-variable">travels</span> <span class="hljs-variable">far</span><span class="hljs-punctuation">)</span><br><span class="hljs-variable">Turnaround</span><span class="hljs-operator">:</span> <span class="hljs-built_in">O</span><span class="hljs-punctuation">(</span><span class="hljs-built_in">N</span><span class="hljs-punctuation">)</span> <span class="hljs-variable">message</span> <span class="hljs-variable">delays</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Warning — Suppression of Weaker Candidates:</strong>
+When a process sees a message with lower attribute than itself, it only sends its own message if it's <code>not participating</code>. This suppresses redundant lower-priority messages.</p>
+</blockquote>
+<hr>
+<h1>Bully Algorithm</h1>
+<h2 id="Key-Difference-from-Ring">Key Difference from Ring</h2>
+<ul>
+<li>All processes know each other's IDs</li>
+<li>Only sends messages to <strong>higher-ID</strong> processes (not broadcast)</li>
+<li>&quot;Bullies&quot; lower-ID processes into accepting the highest alive process</li>
+</ul>
+<h2 id="Three-Message-Types">Three Message Types</h2>
+<ul>
+<li><strong>Election</strong> — &quot;I want to be leader, any higher process object?&quot;</li>
+<li><strong>Answer</strong> — &quot;I'm alive and higher than you, back off&quot;</li>
+<li><strong>Coordinator</strong> — &quot;I am the new leader&quot;</li>
+</ul>
+<h2 id="Protocol-2">Protocol</h2>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">When <span class="hljs-built_in">process</span> Pi wants <span class="hljs-built_in">to</span> initiate election:<br>  <span class="hljs-keyword">if</span> Pi knows <span class="hljs-keyword">it</span> has <span class="hljs-keyword">the</span> highest ID:<br>    Elect self <span class="hljs-keyword">as</span> coordinator<br>    Send Coordinator <span class="hljs-built_in">to</span> all <span class="hljs-built_in">lower</span>-ID processes<br>    Done.<br><br>  <span class="hljs-keyword">else</span>:<br>    Send Election <span class="hljs-built_in">to</span> all HIGHER-ID processes<br>    <span class="hljs-keyword">if</span> no Answer <span class="hljs-keyword">within</span> timeout:<br>     <span class="hljs-comment"> // No higher process alive → Pi wins</span><br>      Elect self<br>      Send Coordinator <span class="hljs-built_in">to</span> all <span class="hljs-built_in">lower</span>-ID processes<br>      Done.<br>    <span class="hljs-keyword">if</span> Answer received:<br>     <span class="hljs-comment"> // Higher process exists → wait</span><br>      Wait <span class="hljs-keyword">for</span> Coordinator message<br>      <span class="hljs-keyword">if</span> no Coordinator <span class="hljs-keyword">within</span> timeout:<br>        Start <span class="hljs-keyword">a</span> <span class="hljs-built_in">new</span> election run<br><br>When Pi receives Election message:<br>  Send Answer (disagree) <span class="hljs-built_in">to</span> sender<br>  Start own election protocol (unless already started)<br></code></pre></td></tr></table></figure>
+<h2 id="Flow-Example">Flow Example</h2>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-symbol">IDs:</span> <span class="hljs-built_in">P1</span> &lt; <span class="hljs-built_in">P2</span> &lt; <span class="hljs-built_in">P3</span> &lt; <span class="hljs-built_in">P4</span> &lt; <span class="hljs-built_in">P5</span> (<span class="hljs-built_in">P5</span> = highest, crashed)<br><span class="hljs-symbol">P1</span> notices <span class="hljs-built_in">P5</span> is down, starts election:<br><br><span class="hljs-symbol">P1</span> → Election → <span class="hljs-built_in">P2</span>, <span class="hljs-built_in">P3</span>, <span class="hljs-built_in">P4</span><br><span class="hljs-symbol">P2</span>, <span class="hljs-built_in">P3</span>, <span class="hljs-built_in">P4</span> reply Answer to <span class="hljs-built_in">P1</span><br><span class="hljs-symbol">P2</span> → Election → <span class="hljs-built_in">P3</span>, <span class="hljs-built_in">P4</span><br><span class="hljs-symbol">P3</span>, <span class="hljs-built_in">P4</span> reply Answer to <span class="hljs-built_in">P2</span><br><span class="hljs-symbol">P3</span> → Election → <span class="hljs-built_in">P4</span><br><span class="hljs-symbol">P4</span> replies Answer to <span class="hljs-built_in">P3</span><br><span class="hljs-symbol">P4</span> → Election → <span class="hljs-built_in">P5</span> (no reply, timeout)<br><span class="hljs-symbol">P4</span> declares self Coordinator<br><span class="hljs-symbol">P4</span> → Coordinator → <span class="hljs-built_in">P1</span>, <span class="hljs-built_in">P2</span>, <span class="hljs-built_in">P3</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Tip — Why &quot;Bully&quot;?</strong>
+Higher-ID processes &quot;bully&quot; lower-ID ones by replying &quot;Answer&quot; — essentially saying &quot;I'm still here, step down.&quot; The highest alive process wins by default.</p>
+</blockquote>
+<blockquote>
+<p><strong>Warning — Multiple Simultaneous Elections:</strong>
+When a process receives an Election message, it starts its OWN election. This can lead to many concurrent election runs, but they all converge on the highest alive process.</p>
+</blockquote>
+<h2 id="Performance-2">Performance</h2>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs vhdl">Best <span class="hljs-keyword">case</span>:  O(<span class="hljs-number">1</span>) messages — highest-ID <span class="hljs-keyword">process</span> detects <span class="hljs-literal">failure</span><br>Worst <span class="hljs-keyword">case</span>: O(N²) messages — lowest-ID <span class="hljs-keyword">process</span> starts election<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="Comparison-Ring-vs-Bully">Comparison: Ring vs Bully</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ring Election</th>
+<th>Bully</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Knowledge needed</strong></td>
+<td>Only know successor</td>
+<td>Know all IDs</td>
+</tr>
+<tr>
+<td><strong>Messages (worst)</strong></td>
+<td>O(N²)</td>
+<td>O(N²)</td>
+</tr>
+<tr>
+<td><strong>Turnaround</strong></td>
+<td>O(N)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td><strong>Failures during</strong></td>
+<td>Handled by continuing</td>
+<td>Handled by timeout</td>
+</tr>
+<tr>
+<td><strong>Elected process</strong></td>
+<td>Highest attribute</td>
+<td>Highest ID alive</td>
+</tr>
+</tbody>
+</table>
 
                 
               </div>
@@ -328,6 +403,8 @@ $$</p>
       
         <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
       
+        <a href="/tags/leader-election/" class="print-no-link">#leader-election</a>
+      
     </div>
   
 </div>
@@ -338,8 +415,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Leader Election Algorithms</div>
+      <div>http://example.com/2026/04/10/leader-election-algorithms/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +428,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>April 10, 2026</div>
         </div>
       
       
@@ -383,9 +460,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/central-server-and-ring-algorithms/" title="Central Server and Ring-Based Mutual Exclusion">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Central Server and Ring-Based Mutual Exclusion</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +470,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/04/10/maekawa-algorithm/" title="Maekawa Algorithm">
+                        <span class="hidden-mobile">Maekawa Algorithm</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +494,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: 'd4982ec7761235edd56b6061e6f49797'
           }
         )
         var gitalk = new Gitalk(options);

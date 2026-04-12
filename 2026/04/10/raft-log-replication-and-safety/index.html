@@ -19,22 +19,24 @@
   <meta name="author" content="Henry Mo">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+    <meta name="description" content="Neutralizing Old Leaders Problem Deposed leader may not be dead — just temporarily disconnected. When it reconnects, it may try to commit stale log entries. Solution: Terms 123456789Every RPC contains">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Failure Detector Worst-Case Detection Time">
-<meta property="og:url" content="http://example.com/2026/03/02/failure-detector-worst-case-detection-time/index.html">
+<meta property="og:title" content="Raft Log Replication and Safety">
+<meta property="og:url" content="http://example.com/2026/04/10/raft-log-replication-and-safety/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Setup Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}">
+<meta property="og:description" content="Neutralizing Old Leaders Problem Deposed leader may not be dead — just temporarily disconnected. When it reconnects, it may try to commit stale log entries. Solution: Terms 123456789Every RPC contains">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-02T19:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-04T03:10:59.905Z">
+<meta property="article:published_time" content="2026-04-10T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T03:28:09.537Z">
 <meta property="article:author" content="Henry Mo">
+<meta property="article:tag" content="consensus">
 <meta property="article:tag" content="distributed-systems">
+<meta property="article:tag" content="raft">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Failure Detector Worst-Case Detection Time - Hexo</title>
+  <title>Raft Log Replication and Safety - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Failure Detector Worst-Case Detection Time"></span>
+            <span id="subtitle" data-typed-text="Raft Log Replication and Safety"></span>
           
         </div>
 
@@ -211,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-02 13:00" pubdate>
-          March 2, 2026 pm
+        <time datetime="2026-04-10 13:00" pubdate>
+          April 10, 2026 pm
         </time>
       </span>
     
@@ -223,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          210 words
+          215 words
         
       </span>
     
@@ -271,49 +273,160 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Failure Detector Worst-Case Detection Time</h1>
+            <h1 id="seo-header">Raft Log Replication and Safety</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Setup">Setup</h2>
-<p>Worst-case failure detection time is measured from the instant a monitored process crashes to the instant the detector declares it failed. Under bounded one-way delay ($d \in [d_{\min}, d_{\max}]$), the worst case occurs when the failure happens <strong>right after</strong> the last successful message is sent — this gives the detector the least evidence and maximises waiting time.</p>
+                <h1>Neutralizing Old Leaders</h1>
+<h2 id="Problem">Problem</h2>
+<p>Deposed leader may not be dead — just temporarily disconnected. When it reconnects, it may try to commit stale log entries.</p>
+<h2 id="Solution-Terms">Solution: Terms</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">Every RPC contains sende<span class="hljs-string">r&#x27;s term.</span><br><span class="hljs-string"></span><br><span class="hljs-string">If sender&#x27;</span>s term <span class="hljs-keyword">is</span> OLDER than receive<span class="hljs-string">r&#x27;s:</span><br><span class="hljs-string">  → RPC is REJECTED</span><br><span class="hljs-string">  → Sender reverts to follower, updates term</span><br><span class="hljs-string"></span><br><span class="hljs-string">If receiver&#x27;</span>s term <span class="hljs-keyword">is</span> OLDER than sende<span class="hljs-string">r&#x27;s:</span><br><span class="hljs-string">  → Receiver reverts to follower, updates term</span><br><span class="hljs-string">  → Then processes RPC normally</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Important — Election Updates Majority:</strong>
+New election updates terms of majority of servers → deposed leader can't commit new entries (its term is stale, rejected by majority).</p>
+</blockquote>
 <hr>
-<h2 id="Case-1-Heartbeats-sender-q-→-monitor-p-every-T-seconds">Case 1: Heartbeats (sender $q$ → monitor $p$, every $T$ seconds)</h2>
-<p>Process $q$ sends a heartbeat every $T$ seconds. Any heartbeat sent at time $t$ arrives at $p$ in $[t + d_{\min},\ t + d_{\max}]$.</p>
-<p><strong>What timeout should $p$ use?</strong></p>
-<p>The largest possible gap between two <em>consecutive arrivals</em> at $p$ occurs when one heartbeat arrives as early as possible (delay $d_{\min}$) and the next arrives as late as possible (delay $d_{\max}$):</p>
-<p>$$
-(t + T + d_{\max}) - (t + d_{\min}) = T + (d_{\max} - d_{\min})
-$$</p>
-<p>So $p$ can safely wait at most $T + \Delta$ (where $\Delta = d_{\max} - d_{\min}$) after the last arrival before declaring $q$ crashed.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending a heartbeat at time $t$. That last heartbeat may take the maximum delay, arriving at $t + d_{\max}$. After receiving it, $p$ waits $T + \Delta$ and then times out.</p>
-<p>Total delay from crash to detection:</p>
-<p>$$
-d_{\max} + (T + \Delta) = d_{\max} + T + (d_{\max} - d_{\min}) = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
+<h1>Normal Operation (Log Replication)</h1>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs pf"><span class="hljs-number">1</span>. Client sends command <span class="hljs-keyword">to</span> leader<br><span class="hljs-number">2</span>. Leader appends command <span class="hljs-keyword">to</span> <span class="hljs-keyword">log</span> (NOT yet committed)<br><span class="hljs-number">3</span>. Leader sends AppendEntries RPCs <span class="hljs-keyword">to</span> <span class="hljs-literal">all</span> followers<br><span class="hljs-number">4</span>. Once entry committed*:<br>     Leader: <span class="hljs-built_in">pass</span> command <span class="hljs-keyword">to</span> <span class="hljs-keyword">state</span> machine, return result <span class="hljs-keyword">to</span> client<br>     Leader: notify followers of committed entries <span class="hljs-keyword">in</span> next AppendEntries<br>     Followers: <span class="hljs-built_in">pass</span> committed commands <span class="hljs-keyword">to</span> their <span class="hljs-keyword">state</span> machines<br><br>* Crashed/slow followers: leader retries until they succeed<br>* Performance: optimal with one successful RPC <span class="hljs-keyword">to</span> <span class="hljs-literal">any</span> majority<br></code></pre></td></tr></table></figure>
+<h2 id="AppendEntries-RPC-Arguments">AppendEntries RPC Arguments</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>term</code></td>
+<td>Leader's term</td>
+</tr>
+<tr>
+<td><code>leaderId</code></td>
+<td>So follower can redirect clients</td>
+</tr>
+<tr>
+<td><code>prevLogIndex</code></td>
+<td>Index of entry preceding new ones</td>
+</tr>
+<tr>
+<td><code>prevLogTerm</code></td>
+<td>Term of prevLogIndex entry</td>
+</tr>
+<tr>
+<td><code>entries[]</code></td>
+<td>Log entries to store (empty = heartbeat)</td>
+</tr>
+<tr>
+<td><code>commitIndex</code></td>
+<td>Last entry known to be committed</td>
+</tr>
+</tbody>
+</table>
+<h2 id="AppendEntries-Implementation">AppendEntries Implementation</h2>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs ada"><span class="hljs-number">1</span>. <span class="hljs-keyword">Return</span> failure <span class="hljs-keyword">if</span> term &lt; currentTerm<br><span class="hljs-number">2</span>. <span class="hljs-keyword">If</span> term &gt; currentTerm: currentTerm ← term<br><span class="hljs-number">3</span>. <span class="hljs-keyword">If</span> candidate <span class="hljs-keyword">or</span> leader: step down<br><span class="hljs-number">4</span>. Reset election timeout<br><span class="hljs-number">5</span>. <span class="hljs-keyword">Return</span> failure <span class="hljs-keyword">if</span> log doesn<span class="hljs-symbol">&#x27;t</span> contain <span class="hljs-keyword">entry</span> <span class="hljs-keyword">at</span> prevLogIndex <span class="hljs-keyword">with</span> prevLogTerm<br><span class="hljs-number">6</span>. <span class="hljs-keyword">If</span> existing entries conflict <span class="hljs-keyword">with</span> <span class="hljs-keyword">new</span> entries:<br>     Delete <span class="hljs-keyword">all</span> existing entries starting <span class="hljs-keyword">with</span> first conflict<br><span class="hljs-number">7</span>. Append any <span class="hljs-keyword">new</span> entries <span class="hljs-keyword">not</span> already <span class="hljs-keyword">in</span> log<br><span class="hljs-number">8</span>. Advance state machine <span class="hljs-keyword">with</span> newly committed entries<br></code></pre></td></tr></table></figure>
 <hr>
-<h2 id="Case-2-Ping–Ack-monitor-p-pings-server-q-every-T-seconds">Case 2: Ping–Ack (monitor $p$ pings server $q$ every $T$ seconds)</h2>
-<p>Here $p$ is the monitor: it sends a ping every $T$ seconds and expects an ack back. A round trip has worst-case time $2d_{\max}$.</p>
-<p><strong>Worst-case crash timing:</strong></p>
-<p>$q$ crashes immediately <em>after</em> sending an ack. To maximise detection time, this crash should happen as early as possible within the $T$-second period — which occurs when the ping reaches $q$ with the minimum delay $d_{\min}$, so $q$ replies (and then crashes) quickly.</p>
+<h1>Log Consistency</h1>
+<h2 id="Raft-s-Log-Guarantees">Raft's Log Guarantees</h2>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">┌──────────────────────────────────────────────────────┐<br>│ <span class="hljs-keyword">If</span> two <span class="hljs-keyword">log</span> entries have the SAME <span class="hljs-keyword">index</span> <span class="hljs-keyword">AND</span> term:     │<br>│   <span class="hljs-number">1.</span> They store the SAME command                     │<br>│   <span class="hljs-number">2.</span> The logs are IDENTICAL <span class="hljs-keyword">in</span> <span class="hljs-keyword">all</span> <span class="hljs-keyword">preceding</span> entries │<br>└──────────────────────────────────────────────────────┘<br><br><span class="hljs-keyword">If</span> an entry <span class="hljs-keyword">is</span> <span class="hljs-keyword">committed</span> → <span class="hljs-keyword">ALL</span> <span class="hljs-keyword">preceding</span> entries are <span class="hljs-keyword">committed</span><br></code></pre></td></tr></table></figure>
+<h2 id="AppendEntries-Consistency-Check">AppendEntries Consistency Check</h2>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs smali">Leader sends: prevLogIndex, prevLogTerm with each RPC<br>Follower checks: does my log contain an entry at prevLogIndex with prevLogTerm?<br>  Yes → append entries (consistency<span class="hljs-built_in"> check </span>passes)<br>  No  → reject (inconsistency found)<br></code></pre></td></tr></table></figure>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs x86asm"><span class="hljs-symbol">leader:</span>   [<span class="hljs-number">1</span>:<span class="hljs-keyword">add</span>] [<span class="hljs-number">1</span>:<span class="hljs-keyword">cmp</span>] [<span class="hljs-number">1</span>:<span class="hljs-keyword">ret</span>] [<span class="hljs-number">2</span>:<span class="hljs-keyword">mov</span>] [<span class="hljs-number">3</span>:<span class="hljs-keyword">jmp</span>]<br><span class="hljs-symbol">follower:</span> [<span class="hljs-number">1</span>:<span class="hljs-keyword">add</span>] [<span class="hljs-number">1</span>:<span class="hljs-keyword">cmp</span>] [<span class="hljs-number">1</span>:<span class="hljs-keyword">ret</span>] [<span class="hljs-number">2</span>:<span class="hljs-keyword">mov</span>]<br>            ✓       ✓       ✓       ✓<br>            AppendEntries succeeds (matching prev entry)<br><span class="hljs-symbol"></span><br><span class="hljs-symbol">follower:</span> [<span class="hljs-number">1</span>:<span class="hljs-keyword">add</span>] [<span class="hljs-number">1</span>:<span class="hljs-keyword">cmp</span>] [<span class="hljs-number">1</span>:<span class="hljs-keyword">ret</span>]<br>            ✓       ✓       ✓       ✗ (missing index <span class="hljs-number">4</span>)<br>            AppendEntries fails (mismatch <span class="hljs-meta">at</span> prevLogIndex)<br></code></pre></td></tr></table></figure>
+<hr>
+<h1>Repairing Follower Logs</h1>
+<h2 id="Problem-2">Problem</h2>
+<p>After a leader change, followers may have:</p>
 <ul>
-<li>Crash occurs ~$d_{\min}$ after $p$ sent the last successful ping.</li>
-<li>The next ping isn't sent until the next period, so the gap from crash to next ping is $T - d_{\min}$.</li>
-<li>After sending the next ping, $p$ waits up to $2d_{\max}$ for an ack; none arrives.</li>
+<li><strong>Extra entries</strong> (from old leader, never committed)</li>
+<li><strong>Missing entries</strong> (fell behind)</li>
 </ul>
-<p>Total delay from crash to detection:</p>
-<p>$$
-(T - d_{\min}) + 2d_{\max} = \boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
+<h2 id="Solution-nextIndex">Solution: nextIndex</h2>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs smali">Leader maintains nextIndex[i] for each follower i:<br>  = index of next log entry to send to follower i<br>  = initialized to (leader&#x27;s last log index + 1)<br><br>When AppendEntries consistency<span class="hljs-built_in"> check </span>FAILS:<br>  decrement nextIndex[i]<br>  retry AppendEntries<br><br>When follower overwrites an inconsistent entry:<br>  DELETE all subsequent entries<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Tip — Efficient Repair:</strong>
+The leader backs up one index at a time until it finds where follower's log matches. Then it sends all missing entries in one RPC. Some implementations use binary search for speed.</p>
+</blockquote>
 <hr>
-<h2 id="Conclusion">Conclusion</h2>
-<p>Under periodic sends every $T$ and bounded one-way delay, both heartbeat and ping–ack schemes yield the <strong>same worst-case detection time</strong>:</p>
-<p>$$
-\boxed{T + 2d_{\max} - d_{\min}}
-$$</p>
-<p>This is a nice result — it shows that the choice between push (heartbeat) and pull (ping–ack) doesn't affect worst-case guarantees. The bound is driven entirely by the period $T$ and the delay uncertainty $\Delta = d_{\max} - d_{\min}$, not by which side initiates.</p>
+<h1>Safety: Committed Entries Survive Leader Changes</h1>
+<h2 id="Raft-Safety-Property">Raft Safety Property</h2>
+<blockquote>
+<p><strong>If a leader has decided that a log entry is committed, that entry will be present in the logs of all future leaders.</strong></p>
+</blockquote>
+<h2 id="How-This-Is-Enforced">How This Is Enforced</h2>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs applescript">┌─────────────────────────────────────────────────────────┐<br>│ RESTRICTIONS ON COMMITMENT                              │<br>│   Leaders never overwrite their own <span class="hljs-built_in">log</span> entries         │<br>│   Only entries <span class="hljs-keyword">in</span> leader&#x27;s <span class="hljs-built_in">log</span> can be committed         │<br>│   Entries must be committed <span class="hljs-keyword">before</span> applying <span class="hljs-keyword">to</span> SM       │<br>│                                                         │<br>│ RESTRICTIONS ON LEADER ELECTION                         │<br>│   Candidate must have <span class="hljs-built_in">log</span> <span class="hljs-keyword">at</span> least <span class="hljs-keyword">as</span> up-<span class="hljs-keyword">to</span>-<span class="hljs-built_in">date</span>        │<br>│   <span class="hljs-keyword">as</span> majority → winner has all committed entries        │<br>└─────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<h2 id="New-Commitment-Rules">New Commitment Rules</h2>
+<p>An entry is committed when:</p>
+<ol>
+<li>Stored on a <strong>majority</strong> of servers</li>
+<li><strong>At least one new entry from leader's CURRENT term</strong> is also stored on majority</li>
+</ol>
+<blockquote>
+<p><strong>Warning — Why Current-Term Requirement?</strong>
+A leader cannot safely commit entries from previous terms based on majority count alone (due to log repair edge cases). It must commit at least one current-term entry to &quot;anchor&quot; the previous ones. This prevents a subtle safety violation.</p>
+</blockquote>
+<hr>
+<h1>Persistent State</h1>
+<p>Each server persists to <strong>stable storage</strong> before responding to RPCs:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>currentTerm</code></td>
+<td>Latest term server has seen (init: 0)</td>
+</tr>
+<tr>
+<td><code>votedFor</code></td>
+<td>CandidateId that received vote this term (or null)</td>
+</tr>
+<tr>
+<td><code>log[]</code></td>
+<td>Log entries: <code>{term, index, command}</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Important — Why Persist These Three?</strong></p>
+<ul>
+<li><code>currentTerm</code>: prevents voting for two candidates in same term after crash</li>
+<li><code>votedFor</code>: prevents voting twice in same term after crash</li>
+<li><code>log[]</code>: the actual replicated data</li>
+</ul>
+</blockquote>
+<hr>
+<h1>Raft Protocol Summary</h1>
+<h2 id="Followers">Followers</h2>
+<ul>
+<li>Respond to RPCs from candidates and leaders</li>
+<li>Convert to candidate if election timeout expires without heartbeat/vote-grant</li>
+</ul>
+<h2 id="Candidates">Candidates</h2>
+<ul>
+<li>Increment term, vote for self, reset timeout</li>
+<li>Send RequestVote to all, wait for:
+<ul>
+<li>Majority votes → become leader</li>
+<li>AppendEntries from new leader → step down</li>
+<li>Timeout → increment term, retry</li>
+</ul>
+</li>
+</ul>
+<h2 id="Leaders">Leaders</h2>
+<ul>
+<li>Initialize nextIndex[i] = last log index + 1 for each follower</li>
+<li>Send empty AppendEntries heartbeats periodically</li>
+<li>Accept client commands, append to local log</li>
+<li>When lastLogIndex ≥ nextIndex[i]: send AppendEntries to follower i</li>
+<li>On failure: decrement nextIndex[i], retry</li>
+<li>Commit entries stored on majority with current-term anchor</li>
+<li>Step down if currentTerm changes</li>
+</ul>
 
                 
               </div>
@@ -328,6 +441,10 @@ $$</p>
       
         <a href="/tags/distributed-systems/" class="print-no-link">#distributed-systems</a>
       
+        <a href="/tags/consensus/" class="print-no-link">#consensus</a>
+      
+        <a href="/tags/raft/" class="print-no-link">#raft</a>
+      
     </div>
   
 </div>
@@ -338,8 +455,8 @@ $$</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Failure Detector Worst-Case Detection Time</div>
-      <div>http://example.com/2026/03/02/failure-detector-worst-case-detection-time/</div>
+      <div>Raft Log Replication and Safety</div>
+      <div>http://example.com/2026/04/10/raft-log-replication-and-safety/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +468,7 @@ $$</p>
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>March 2, 2026</div>
+          <div>April 10, 2026</div>
         </div>
       
       
@@ -383,9 +500,9 @@ $$</p>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/30/cost-function/" title="Cost Function">
+                      <a href="/2026/04/10/ordered-multicast/" title="Ordered Multicast">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Cost Function</span>
+                        <span class="hidden-mobile">Ordered Multicast</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -393,8 +510,8 @@ $$</p>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/14/using-wispr-flow-with-claude/" title="Using Wispr Flow with Claude - A Game Changer">
-                        <span class="hidden-mobile">Using Wispr Flow with Claude - A Game Changer</span>
+                      <a href="/2026/04/10/ricart-agrawala-algorithm/" title="Ricart-Agrawala Algorithm">
+                        <span class="hidden-mobile">Ricart-Agrawala Algorithm</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -417,7 +534,7 @@ $$</p>
         var options = Object.assign(
           {"clientID":"Ov23li0tsMxR5cQphUUI","clientSecret":"01fbe861d0607e49a9d12d9f4ec3d753c2bdeeb7","repo":"henryqingmo.github.io","owner":"henryqingmo","admin":["henryqingmo"],"language":"en","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a741cae0dc87298225221f81d5128bc4'
+            id: 'e206e89f059e0ada9da5edee31ffcaf1'
           }
         )
         var gitalk = new Gitalk(options);
